@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="board.service.BoardMapper">
+	<!--게시글 등록 -->
+	<insert id="insertBoard" parameterType="board">
+		INSERT INTO
+		board(boardnum,name,title,content)
+		VALUES (board_seq.nextval,
+		#{name},#{title},#{content})
+	</insert>
+
+	<!-- 게시글 읽기 -->
+	 <select id="selectBoard" resultType="board">
+		SELECT *
+		FROM board
+		WHERE
+		boardnum = #{boardnum}
+	</select> 
+
+	<!-- 조회수 증가 -->
+	 <update id="addHits">
+		UPDATE board
+		SET hits = hits+1
+		WHERE boardnum =
+		#{boardnum}
+	</update> 
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard">
+		DELETE board
+		WHERE boardnum = #{boardnum}
+	</delete>
+
+	<!-- 게시글 전체 목록 -->
+	<select id="getBoardList" resultType="board">
+		SELECT *
+		FROM board
+	</select> 
+
+	<!-- 게시글 검색* -->
+	<!-- col = 1 제목 col = 2 작성자 col = 3 내용 -->
+
+	 <select id="searchBoard" parameterType="map" resultType="board">
+		SELECT *
+		from board
+		
+		<where>
+			<if test="col == 1">
+				title like '%'||#{word}||'%'
+			</if>
+			<if test="col == 2">
+				name like '%'||#{word}||'%'
+			</if>
+			<if test="col == 3">
+				content like '%'||#{word}||'%'
+			</if>
+		</where> 
+		<!--if문은 mybatis전용 문법 test안에 조건식 넣으면 됨 -->
+	 </select>
+
+	<!-- 댓글 등록 -->
+	<insert id="insertReply" parameterType="reply">
+		INSERT INTO
+		reply(replynum,boardnum,name,content)
+		VALUES (reply_seq.nextval,
+		#{boardnum},#{name},#{content})
+	</insert> 
+
+	<!-- 댓글 읽기 -->
+	 <select id="getReplyList" resultType="reply">
+		SELECT *
+		FROM reply	
+	</select> 
+	
+	<select id="getReplyList" resultType="reply">
+		select *
+		from adminreply
+		where gameNum = #{gamenum}
+	</select>
+</mapper>
